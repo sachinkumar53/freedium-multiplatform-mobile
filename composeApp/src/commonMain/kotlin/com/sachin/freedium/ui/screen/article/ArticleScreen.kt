@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import buildFreediumUrl
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
@@ -19,7 +20,10 @@ import com.multiplatform.webview.web.rememberWebViewState
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun ArticleScreen(mediumUrl: String) {
+fun ArticleScreen(
+    mediumUrl: String,
+    viewModel: ArticleViewModel = viewModel()
+) {
     val webViewState = rememberWebViewState(buildFreediumUrl(mediumUrl))
     val webViewNavigator = rememberWebViewNavigator()
 
@@ -29,15 +33,15 @@ fun ArticleScreen(mediumUrl: String) {
             supportZoom = false
             isJavaScriptEnabled = true
             androidWebSettings.apply {
-                isAlgorithmicDarkeningAllowed = true
-                // safeBrowsingEnabled = true
+                // isAlgorithmicDarkeningAllowed = true
+                // domStorageEnabled = true
+                safeBrowsingEnabled = true
             }
         }
     }
 
     LaunchedEffect(Unit) {
         snapshotFlow { webViewState.loadingState }.collectLatest {
-            println(it)
             if (it is LoadingState.Finished) {
                 webViewNavigator.evaluateJavaScript(
                     """
