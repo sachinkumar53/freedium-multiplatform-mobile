@@ -37,5 +37,6 @@ object SharedTextHandler {
         return matchResult?.value
     }
 
-    private const val MEDIUM_URL_REGEX = "https?://(?:www\\.)?medium\\.com/\\S+"
+    private const val MEDIUM_URL_REGEX =
+        "(https?://(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.\\S{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.\\S{2,}|https?://(?:www\\.|(?!www))[a-zA-Z0-9]+\\.\\S{2,}|www\\.[a-zA-Z0-9]+\\.\\S{2,})"
 }
