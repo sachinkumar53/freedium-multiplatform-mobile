@@ -22,7 +22,7 @@ private val darkColors = darkColors(
 
 @Composable
 fun FreediumTheme(
-    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    isDarkTheme: Boolean = false, //isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
 

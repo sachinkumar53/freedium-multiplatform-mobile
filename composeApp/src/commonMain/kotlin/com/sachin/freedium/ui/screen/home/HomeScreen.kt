@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
@@ -16,48 +17,40 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.sachin.freedium.SharedTextHandler
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sachin.freedium.util.CollectAsEvent
 import freedium.composeapp.generated.resources.Res
 import freedium.composeapp.generated.resources.ic_add_link
-import kotlinx.coroutines.launch
+import freedium.composeapp.generated.resources.ic_close
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun HomeScreen(
-    navigateToArticleScreen: (String) -> Unit
+    navigateToArticleScreen: (String) -> Unit,
+    viewModel: HomeViewModel = viewModel()
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+
+    CollectAsEvent(viewModel.uiEvent) { uiEvent ->
+        when (uiEvent) {
+            is HomeUiEvent.NavigateToArticle -> navigateToArticleScreen(uiEvent.url)
+            is HomeUiEvent.ShowSnackbar -> snackbarHostState.showSnackbar(uiEvent.message)
+        }
+    }
 
     HomeScreenContent(
-        url = text,
-        onUrlChanged = { text = it },
-        onSubmitUrl = {
-            try {
-                val url = SharedTextHandler.validateMediumUrl(it)
-                navigateToArticleScreen(url)
-            } catch (e: NullPointerException) {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar("Please enter a medium post link")
-                }
-            } catch (e: IllegalArgumentException) {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar("Invalid medium post link")
-                }
-            }
-        },
+        url = uiState.url,
+        onUrlChanged = viewModel::onUrlChange,
+        onSubmitUrl = viewModel::submitUrl,
         snackbarHostState = snackbarHostState
     )
 }
@@ -66,7 +59,7 @@ fun HomeScreen(
 private fun HomeScreenContent(
     url: String,
     onUrlChanged: (String) -> Unit,
-    onSubmitUrl: (String) -> Unit,
+    onSubmitUrl: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
@@ -103,11 +96,23 @@ private fun HomeScreenContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Text(
+            /*Button(
+                onClick = { onSubmitUrl(url) },
+                modifier = Modifier.padding(top = 16.dp)
+                    .align(alignment = Alignment.End)
+            ) {
+                Text(text = "Go")
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(
+                    painter = painterResource(Res.drawable.ic_go),
+                    contentDescription = "Go"
+                )
+            }*/
+            /*Text(
                 text = "Recent posts",
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier.padding(top = 24.dp)
-            )
+            )*/
         }
     }
 }
@@ -116,7 +121,7 @@ private fun HomeScreenContent(
 private fun LinkField(
     url: String,
     onUrlChanged: (String) -> Unit,
-    onSubmitUrl: (String) -> Unit,
+    onSubmitUrl: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
@@ -129,13 +134,25 @@ private fun LinkField(
             keyboardType = KeyboardType.Uri,
             autoCorrectEnabled = false
         ),
-        keyboardActions = KeyboardActions(onGo = { onSubmitUrl(url) }),
+        keyboardActions = KeyboardActions(onGo = { onSubmitUrl() }),
         maxLines = 1,
         leadingIcon = {
             Icon(
                 painter = painterResource(Res.drawable.ic_add_link),
                 contentDescription = null
             )
+        },
+        trailingIcon = {
+            if (url.isNotEmpty()) {
+                IconButton(
+                    onClick = { onUrlChanged("") }
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_close),
+                        contentDescription = "Clear"
+                    )
+                }
+            }
         }
     )
 }

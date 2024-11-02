@@ -29,7 +29,8 @@ fun ArticleScreen(mediumUrl: String) {
             supportZoom = false
             isJavaScriptEnabled = true
             androidWebSettings.apply {
-                isAlgorithmicDarkeningAllowed = true
+                // domStorageEnabled = true
+                // isAlgorithmicDarkeningAllowed = true
                 // safeBrowsingEnabled = true
             }
         }
