@@ -23,7 +23,7 @@ object SharedTextHandler {
             throw NullPointerException("No URL found in text: $url")
         }
 
-        val urlRegex = Regex(MEDIUM_URL_REGEX)
+        val urlRegex = Regex(URL_REGEX)
 
         if (!urlRegex.matches(url)) {
             throw IllegalArgumentException("URL is not from Medium: $url")
@@ -32,11 +32,10 @@ object SharedTextHandler {
     }
 
     private fun extractMediumUrlFromText(text: String): String? {
-        val urlRegex = Regex(MEDIUM_URL_REGEX)
+        val urlRegex = Regex(URL_REGEX)
         val matchResult = urlRegex.find(text)
         return matchResult?.value
     }
 
-    private const val MEDIUM_URL_REGEX =
-        "(https?://(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.\\S{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.\\S{2,}|https?://(?:www\\.|(?!www))[a-zA-Z0-9]+\\.\\S{2,}|www\\.[a-zA-Z0-9]+\\.\\S{2,})"
+    private const val URL_REGEX = "https://\\S+"
 }
