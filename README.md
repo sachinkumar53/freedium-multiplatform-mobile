@@ -12,7 +12,7 @@
 2. **Share to App**: Use the share functionality on Medium articles and select Freedium Mobile App to read the article instantly.
 
 ## Installation
-For now, the app is available on Android. Download the APK from the [Releases](./releases) section and install it on your Android device.
+For now, the app is available on Android. Download the APK from the [Releases](https://github.com/sachinkumar53/freedium-multiplatform-mobile/releases) section and install it on your Android device.
 
 *iOS support will be available soon.*
 
@@ -20,7 +20,7 @@ For now, the app is available on Android. Download the APK from the [Releases](.
 This app is an open-source project inspired by and built to extend the functionality of [Freedium](https://freedium.cfd/). We’d like to give full credit to the original creator of Freedium for developing this service. This mobile application aims to make it easier for users to use Freedium on mobile devices.
 
 ## License
-This project is licensed under the [GPL License](https://github.com/sachinkumar53/freedium-multiplatform-mobile/tree/master?tab=GPL-3.0-1-ov-file), which allows for reuse, modification, and distribution. See the `LICENSE` file for more details.
+This project is licensed under the [GPL License](./LICENSE), which allows for reuse, modification, and distribution. See the `LICENSE` file for more details.
 
 ## Contributing
 We welcome contributions to improve and expand the functionality of Freedium Mobile App. To contribute:
