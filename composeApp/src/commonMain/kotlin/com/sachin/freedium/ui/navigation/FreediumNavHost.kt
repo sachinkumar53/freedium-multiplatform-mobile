@@ -9,17 +9,26 @@ import com.sachin.freedium.SharedTextHandler
 import com.sachin.freedium.ui.screen.article.ArticleScreen
 import com.sachin.freedium.ui.screen.home.HomeScreen
 import com.sachin.freedium.util.CollectAsEvent
+import multiplatform.network.cmptoast.showToast
 
 @Composable
 fun FreediumNavHost() {
     val navController = rememberNavController()
 
-    CollectAsEvent(SharedTextHandler.sharedUrlFlow) { url ->
-        navController.navigate(Route.Article(url)) {
-            popUpTo(Route.Home) {
-                inclusive = true
+    CollectAsEvent(SharedTextHandler.sharedUrlResult) { result ->
+        result.fold(
+            onSuccess = { url ->
+                navController.navigate(Route.Article(url)) {
+                    popUpTo(Route.Home) {
+                        inclusive = true
+                    }
+                }
+            },
+            onFailure = { t ->
+                t.printStackTrace()
+                showToast(message = t.message ?: "Something went wrong!")
             }
-        }
+        )
     }
 
     NavHost(

@@ -2,6 +2,7 @@ package com.sachin.freedium.ui.screen.home
 
 import androidx.lifecycle.ViewModel
 import com.sachin.freedium.SharedTextHandler
+import com.sachin.freedium.util.validateUrl
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +22,7 @@ class HomeViewModel : ViewModel() {
 
     fun submitUrl() {
         try {
-            val url = SharedTextHandler.validateMediumUrl(url = uiState.value.url)
+            val url = validateUrl(url = uiState.value.url)
             _uiEvent.trySend(HomeUiEvent.NavigateToArticle(url = url))
         } catch (e: NullPointerException) {
             _uiEvent.trySend(HomeUiEvent.ShowSnackbar("Please enter a medium post link"))

@@ -47,6 +47,7 @@ kotlin {
             api(libs.compose.webview.multiplatform)
             implementation(libs.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.cmptoast)
         }
     }
 }

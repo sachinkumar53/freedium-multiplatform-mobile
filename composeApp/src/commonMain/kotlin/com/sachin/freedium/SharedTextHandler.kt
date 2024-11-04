@@ -1,41 +1,24 @@
 package com.sachin.freedium
 
+import com.sachin.freedium.util.extractUrlFromText
+import com.sachin.freedium.util.validateUrl
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 
 object SharedTextHandler {
 
-    private val _sharedUrlChannel = Channel<String>(capacity = Channel.BUFFERED)
-    internal val sharedUrlFlow = _sharedUrlChannel.receiveAsFlow()
+    private val _sharedUrlChannel = Channel<Result<String>>(capacity = Channel.BUFFERED)
+    internal val sharedUrlResult = _sharedUrlChannel.receiveAsFlow()
 
     fun handleText(text: String?) {
-        val url = text?.let { extractMediumUrlFromText(it) }
+        val url = text?.let { extractUrlFromText(it) }
         try {
-            val validUrl = validateMediumUrl(url)
-            _sharedUrlChannel.trySend(validUrl)
+            val validUrl = validateUrl(url)
+            _sharedUrlChannel.trySend(Result.success(validUrl))
         } catch (e: Exception) {
-            e.printStackTrace()
+            _sharedUrlChannel.trySend(Result.failure(e))
         }
     }
 
-    internal fun validateMediumUrl(url: String?): String {
-        if (url.isNullOrEmpty()) {
-            throw NullPointerException("No URL found in text: $url")
-        }
-
-        val urlRegex = Regex(URL_REGEX)
-
-        if (!urlRegex.matches(url)) {
-            throw IllegalArgumentException("URL is not from Medium: $url")
-        }
-        return url
-    }
-
-    private fun extractMediumUrlFromText(text: String): String? {
-        val urlRegex = Regex(URL_REGEX)
-        val matchResult = urlRegex.find(text)
-        return matchResult?.value
-    }
-
-    private const val URL_REGEX = "https://\\S+"
 }
+
